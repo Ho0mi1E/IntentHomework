@@ -16,42 +16,26 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+    companion object{
+        const val REQUEST_CODE = 1
+    }
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private  var fusedLocationClient: FusedLocationProviderClient? = null
+
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
+        check()
     }
 
-
+    @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-
         btn.setOnClickListener {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ),
-                    1
-                )
-            }
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            fusedLocationClient!!.lastLocation.addOnSuccessListener { location: Location? ->
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("geo:${location?.latitude.toString()}, ${location?.longitude.toString()}")
@@ -59,18 +43,26 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
-
     }
 
+    private fun check(){
 
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                REQUEST_CODE
+            )
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
