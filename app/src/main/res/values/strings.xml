@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">IntentHomework</string>
+    <string name="provider_gps">GPS</string>
+</resources>
